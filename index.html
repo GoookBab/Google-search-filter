@@ -3,43 +3,284 @@
 <head>
   <meta charset="UTF-8">
   <title>Google 검색 쿼리 생성기</title>
+  <style>
+    :root {
+      --bg-color: #ffffff;
+      --text-color: #000000;
+      --input-bg: #ffffff;
+      --input-border: #000000;
+      --button-bg: #000000;
+      --button-text: #ffffff;
+      --container-bg: #ffffff;
+      --border-color: #000000;
+      --link-color: #000000;
+    }
+
+    body.dark {
+      --bg-color: #000000;
+      --text-color: #ffffff;
+      --input-bg: #000000;
+      --input-border: #ffffff;
+      --button-bg: #ffffff;
+      --button-text: #000000;
+      --container-bg: #000000;
+      --border-color: #ffffff;
+      --link-color: #ffffff;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      margin: 0;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: var(--container-bg);
+      padding: 30px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      position: relative;
+    }
+
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 1.5em;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+      margin-top: 15px;
+    }
+
+    input[type="text"],
+    input[type="date"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--input-border);
+      border-radius: 4px;
+      font-size: 14px;
+      background-color: var(--input-bg);
+      color: var(--text-color);
+      box-sizing: border-box;
+    }
+
+    #site-options .category {
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      margin-top: 10px;
+    }
+
+    .category summary {
+      font-weight: bold;
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .category label {
+      display: inline-block;
+      margin: 5px 10px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      margin-top: 25px;
+      padding: 12px;
+      background-color: var(--button-bg);
+      color: var(--button-text);
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    #result {
+      margin-top: 30px;
+      word-break: break-word;
+    }
+
+    a {
+      color: var(--link-color);
+      text-decoration: underline;
+    }
+
+    .theme-toggle-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .theme-toggle-input {
+      appearance: none;
+      position: relative;
+      border: 2px solid gray;
+      border-radius: 1.25em;
+      width: 2.25em;
+      height: 1.25em;
+    }
+
+    .theme-toggle-input::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      width: 1em;
+      height: 1em;
+      border-radius: 50%;
+      transform: scale(0.8);
+      background-color: gray;
+      transition: left 250ms linear;
+    }
+
+    .theme-toggle-input:checked {
+      background-color: tomato;
+      border-color: tomato;
+    }
+
+    .theme-toggle-input:checked::before {
+      background-color: white;
+      left: 1em;
+    }
+
+    .theme-toggle-input:focus-visible {
+      outline: 2px solid tomato;
+      outline-offset: 2px;
+    }
+
+    .theme-toggle-input:hover {
+      box-shadow: 0 0 0 4px lightgray;
+    }
+  </style>
 </head>
 <body>
-  <h2>🔍 Google 검색 쿼리 생성기</h2>
+  <div class="container">
+    <div class="header-row">
+      <h2>🔍 Google 검색 쿼리 생성기</h2>
+      <label class="theme-toggle-label">
+        <input type="checkbox" id="theme-switch" class="theme-toggle-input">
+        다크모드
+      </label>
+    </div>
 
-  <label>검색어:</label><br>
-  <input type="text" id="keyword"><br><br>
+    <label>검색어:</label>
+    <input type="text" id="keyword">
 
-  <label>제목에 포함할 단어 (intitle):</label><br>
-  <input type="text" id="intitle"><br><br>
+    <label>제목에 포함할 단어 (intitle):</label>
+    <input type="text" id="intitle">
 
-  <label>사이트 제한 (예: naver.com):</label><br>
-  <input type="text" id="site"><br><br>
+    <label>사이트 제한 (다중 선택):</label>
+    <div id="site-options">
+      <details class="category" open>
+        <summary>종합 일간지</summary>
+        <label><input type="checkbox" name="site" value="site:chosun.com"> 조선일보</label>
+        <label><input type="checkbox" name="site" value="site:joongang.co.kr"> 중앙일보</label>
+        <label><input type="checkbox" name="site" value="site:donga.com"> 동아일보</label>
+        <label><input type="checkbox" name="site" value="site:hani.co.kr"> 한겨레</label>
+        <label><input type="checkbox" name="site" value="site:khan.co.kr"> 경향신문</label>
+        <label><input type="checkbox" name="site" value="site:hankookilbo.com"> 한국일보</label>
+        <label><input type="checkbox" name="site" value="site:seoul.co.kr"> 서울신문</label>
+      </details>
+      <details class="category">
+        <summary>경제지</summary>
+        <label><input type="checkbox" name="site" value="site:mk.co.kr"> 매일경제</label>
+        <label><input type="checkbox" name="site" value="site:hankyung.com"> 한국경제</label>
+        <label><input type="checkbox" name="site" value="site:sedaily.com"> 서울경제</label>
+        <label><input type="checkbox" name="site" value="site:asiae.co.kr"> 아시아경제</label>
+        <label><input type="checkbox" name="site" value="site:fnnews.com"> 파이낸셜뉴스</label>
+      </details>
+      <details class="category">
+        <summary>방송사 뉴스</summary>
+        <label><input type="checkbox" name="site" value="site:news.kbs.co.kr"> KBS</label>
+        <label><input type="checkbox" name="site" value="site:imnews.imbc.com"> MBC</label>
+        <label><input type="checkbox" name="site" value="site:news.sbs.co.kr"> SBS</label>
+        <label><input type="checkbox" name="site" value="site:news.jtbc.co.kr"> JTBC</label>
+        <label><input type="checkbox" name="site" value="site:ytn.co.kr"> YTN</label>
+        <label><input type="checkbox" name="site" value="site:yonhapnewstv.co.kr"> 연합뉴스TV</label>
+      </details>
+      <details class="category">
+        <summary>디지털/탐사 언론</summary>
+        <label><input type="checkbox" name="site" value="site:ohmynews.com"> 오마이뉴스</label>
+        <label><input type="checkbox" name="site" value="site:pressian.com"> 프레시안</label>
+        <label><input type="checkbox" name="site" value="site:newstapa.org"> 뉴스타파</label>
+        <label><input type="checkbox" name="site" value="site:mediatoday.co.kr"> 미디어오늘</label>
+        <label><input type="checkbox" name="site" value="site:zdnet.co.kr"> ZDNet Korea</label>
+      </details>
+      <details class="category">
+        <summary>공공기관/통신사</summary>
+        <label><input type="checkbox" name="site" value="site:yna.co.kr"> 연합뉴스</label>
+        <label><input type="checkbox" name="site" value="site:ktv.go.kr"> KTV 국민방송</label>
+        <label><input type="checkbox" name="site" value="site:tongilnews.com"> 통일뉴스</label>
+      </details>
+      <details class="category">
+        <summary>커뮤니티/콘텐츠 플랫폼</summary>
+        <label><input type="checkbox" name="site" value="site:pinterest.com"> Pinterest</label>
+        <label><input type="checkbox" name="site" value="site:reddit.com"> Reddit</label>
+        <label><input type="checkbox" name="site" value="site:dcinside.com"> DC Inside</label>
+        <label><input type="checkbox" name="site" value="site:blog.naver.com"> Naver 블로그</label>
+        <label><input type="checkbox" name="site" value="site:cafe.naver.com"> Naver 카페</label>
+        <label><input type="checkbox" name="site" value="site:cafe.daum.net"> Daum 카페</label>
+        <label><input type="checkbox" name="site" value="site:brunch.co.kr"> 브런치</label>
+      </details>
+    </div>
 
-  <label>시작 날짜 (after: YYYY-MM-DD):</label><br>
-  <input type="date" id="after"><br><br>
+    <label>직접 입력 (쉼표로 구분):</label>
+    <input type="text" id="site-manual" placeholder="예: google.com, wikipedia.org">
 
-  <label>종료 날짜 (before: YYYY-MM-DD):</label><br>
-  <input type="date" id="before"><br><br>
+    <label>시작 날짜 (after):</label>
+    <input type="date" id="after">
 
-  <button onclick="generateQuery()">검색 링크 생성</button>
+    <label>종료 날짜 (before):</label>
+    <input type="date" id="before">
 
-  <h3>🔗 생성된 검색 URL:</h3>
-  <p id="result"></p>
+    <button onclick="generateQuery()">검색 링크 생성</button>
+
+    <h3>🔗 생성된 검색 URL:</h3>
+    <p id="result"></p>
+  </div>
 
   <script>
     function generateQuery() {
       const keyword = document.getElementById("keyword").value.trim();
       const intitle = document.getElementById("intitle").value.trim();
-      const site = document.getElementById("site").value.trim();
       const after = document.getElementById("after").value;
       const before = document.getElementById("before").value;
 
-      let query = "";
+      const siteCheckboxes = document.querySelectorAll('input[name="site"]:checked');
+      const siteFiltersFromCheck = Array.from(siteCheckboxes).map(cb => cb.value);
 
+      const manualInput = document.getElementById("site-manual").value.trim();
+      const siteFiltersFromManual = manualInput
+        ? manualInput.split(",").map(site => "site:" + site.trim()).filter(s => s !== "site:")
+        : [];
+
+      const allSiteFilters = [...new Set([...siteFiltersFromCheck, ...siteFiltersFromManual])];
+
+      let query = "";
       if (keyword) query += keyword + " ";
       if (intitle) query += `intitle:"${intitle}" `;
-      if (site) query += `site:${site} `;
+      if (allSiteFilters.length > 0) query += allSiteFilters.join(" ") + " ";
       if (after) query += `after:${after} `;
       if (before) query += `before:${before}`;
 
@@ -48,6 +289,25 @@
 
       document.getElementById("result").innerHTML = `<a href="${searchUrl}" target="_blank">${searchUrl}</a>`;
     }
+
+    const themeSwitch = document.getElementById("theme-switch");
+
+    function applyTheme(theme) {
+      document.body.classList.toggle("dark", theme === "dark");
+      localStorage.setItem("theme", theme);
+      themeSwitch.checked = theme === "dark";
+    }
+
+    themeSwitch.addEventListener("change", () => {
+      applyTheme(themeSwitch.checked ? "dark" : "light");
+    });
+
+    (function () {
+      const saved = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const initial = saved || (prefersDark ? "dark" : "light");
+      applyTheme(initial);
+    })();
   </script>
 </body>
 </html>
